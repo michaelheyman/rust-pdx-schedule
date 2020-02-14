@@ -15,3 +15,12 @@ table! {
         url -> Nullable<Text>,
     }
 }
+
+table! {
+    course (courseid) {
+        courseid -> Integer,
+        name -> Text,
+        class -> Text,
+        discipline -> Text,
+    }
+}

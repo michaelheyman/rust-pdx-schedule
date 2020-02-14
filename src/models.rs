@@ -13,3 +13,11 @@ pub struct Instructor {
     pub rating: Option<f64>,
     pub url: Option<String>,
 }
+
+#[derive(Queryable)]
+pub struct Course {
+    pub id: i32,
+    pub name: String,
+    pub class: String,
+    pub discipline: String,
+}
