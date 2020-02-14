@@ -22,6 +22,7 @@ fn main() {
         println!("{:?}", i.last_name);
         println!("{:?}", i.rating);
         println!("{:?}", i.url);
+        println!("{:?}", i.timestamp);
         println!("----------\n");
     }
 }

@@ -13,6 +13,7 @@ table! {
         lastname -> Nullable<Text>,
         rating -> Nullable<Double>,
         url -> Nullable<Text>,
+        timestamp -> Nullable<Timestamp>,
     }
 }
 
@@ -35,5 +36,6 @@ table! {
         days -> Nullable<Text>,
         time -> Nullable<Text>,
         crn -> Integer,
+        timestamp -> Nullable<Timestamp>,
     }
 }

@@ -1,3 +1,5 @@
+extern crate chrono;
+
 #[derive(Queryable)]
 pub struct Term {
     pub date: i32,
@@ -12,6 +14,7 @@ pub struct Instructor {
     pub last_name: Option<String>,
     pub rating: Option<f64>,
     pub url: Option<String>,
+    pub timestamp: Option<chrono::NaiveDateTime>,
 }
 
 #[derive(Queryable)]
@@ -32,4 +35,5 @@ pub struct ClassOffering {
     pub days: Option<String>,
     pub time: Option<String>,
     pub crn: i32,
+    pub timestamp: Option<chrono::NaiveDateTime>,
 }

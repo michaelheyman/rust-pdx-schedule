@@ -24,6 +24,7 @@ fn main() {
         println!("{:?}", c.days);
         println!("{:?}", c.time);
         println!("{}", c.crn);
+        println!("{:?}", c.timestamp);
         println!("----------\n");
     }
 }
