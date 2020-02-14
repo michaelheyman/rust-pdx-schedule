@@ -21,3 +21,15 @@ pub struct Course {
     pub class: String,
     pub discipline: String,
 }
+
+#[derive(Queryable)]
+pub struct ClassOffering {
+    pub class_offering_id: i32,
+    pub course_id: i32,
+    pub instructor_id: Option<i32>,
+    pub term: Option<i32>,
+    pub credits: i32,
+    pub days: Option<String>,
+    pub time: Option<String>,
+    pub crn: i32,
+}

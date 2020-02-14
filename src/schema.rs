@@ -24,3 +24,16 @@ table! {
         discipline -> Text,
     }
 }
+
+table! {
+    classoffering (classofferingid) {
+        classofferingid -> Integer,
+        courseid -> Integer,
+        instructorid -> Nullable<Integer>,
+        term -> Nullable<Integer>,
+        credits -> Integer,
+        days -> Nullable<Text>,
+        time -> Nullable<Text>,
+        crn -> Integer,
+    }
+}
