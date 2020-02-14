@@ -16,8 +16,12 @@ fn main() {
 
     println!("Displaying {} instructors", results.len());
     for i in results {
+        println!("{}", i.id);
         println!("{}", i.full_name);
-        println!("{}", i.rating);
+        println!("{:?}", i.first_name);
+        println!("{:?}", i.last_name);
+        println!("{:?}", i.rating);
+        println!("{:?}", i.url);
         println!("----------\n");
     }
 }

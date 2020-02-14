@@ -8,8 +8,8 @@ pub struct Term {
 pub struct Instructor {
     pub id: i32,
     pub full_name: String,
-    pub first_name: String,
-    pub last_name: String,
-    pub rating: f64,
-    pub url: String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub rating: Option<f64>,
+    pub url: Option<String>,
 }

@@ -9,9 +9,9 @@ table! {
     instructor (instructorid) {
         instructorid -> Integer,
         fullname -> Text,
-        firstname -> Text,
-        lastname -> Text,
-        rating -> Double,
-        url -> Text,
+        firstname -> Nullable<Text>,
+        lastname -> Nullable<Text>,
+        rating -> Nullable<Double>,
+        url -> Nullable<Text>,
     }
 }
