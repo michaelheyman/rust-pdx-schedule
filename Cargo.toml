@@ -1,0 +1,9 @@
+[package]
+name = "rust_diesel"
+version = "0.1.0"
+license = "MIT OR Apache-2.0"
+authors = ["Michael Heyman <michaelheyman@users.noreply.github.com>"]
+
+[dependencies]
+diesel = { version = "1.4.0", features = ["sqlite"] }
+dotenv = "0.10"
