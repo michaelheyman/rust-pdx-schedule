@@ -39,3 +39,13 @@ table! {
         timestamp -> Nullable<Timestamp>,
     }
 }
+
+joinable!(classoffering -> course (courseid));
+joinable!(classoffering -> instructor (instructorid));
+
+allow_tables_to_appear_in_same_query!(
+    classoffering,
+    course,
+    instructor,
+    term,
+);
