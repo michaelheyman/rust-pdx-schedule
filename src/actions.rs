@@ -1,6 +1,9 @@
 use diesel::prelude::*;
 
+use self::models::*;
 use crate::models;
+
+type ClassOfferingResult = (ClassOffering, Instructor, Course, Term);
 
 pub fn find_terms(
     conn: &SqliteConnection,
@@ -8,6 +11,22 @@ pub fn find_terms(
     use crate::schema::term::dsl::*;
 
     let results = term.load::<models::Term>(conn).optional()?;
+
+    Ok(results)
+}
+
+pub fn get_classes(
+    conn: &SqliteConnection,
+) -> Result<Option<Vec<ClassOfferingResult>>, diesel::result::Error> {
+    use crate::schema::*;
+
+    let results = classoffering::table
+        .inner_join(instructor::table)
+        .inner_join(course::table)
+        .inner_join(term::table)
+        .limit(5)
+        .load::<ClassOfferingResult>(conn)
+        .optional()?;
 
     Ok(results)
 }

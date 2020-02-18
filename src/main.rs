@@ -36,6 +36,26 @@ async fn get_terms(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     }
 }
 
+/// Gets all classes.
+#[get("/classes")]
+async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let classes = web::block(move || actions::get_classes(&conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(classes) = classes {
+        Ok(HttpResponse::Ok().json(classes))
+    } else {
+        let res = HttpResponse::NotFound().body(format!("No classes found"));
+        Ok(res)
+    }
+}
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
@@ -45,7 +65,7 @@ async fn main() -> std::io::Result<()> {
     let bind = "localhost:8080";
 
     println!("Actix running at: http://{}", &bind);
-    println!("\tTerms: http://{}/terms", &bind);
+    print_api_endpoints(&bind);
 
     HttpServer::new(move || {
         App::new()
@@ -53,10 +73,17 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             .route("/", web::get().to(hello_world))
             .service(get_terms)
+            .service(get_classes)
     })
     .bind(&bind)?
     .run()
     .await
+}
+
+fn print_api_endpoints(bind: &&str) {
+    println!("API Endpoints:");
+    println!("\tTerms: http://{}/terms", &bind);
+    println!("\tClasses: http://{}/classes", &bind);
 }
 
 fn create_database_connection_pool() -> Pool<ConnectionManager<SqliteConnection>> {
