@@ -1,12 +1,14 @@
 extern crate chrono;
+extern crate serde;
+use self::serde::{Serialize, Deserialize};
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct Term {
     pub date: i32,
     pub description: String,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct Instructor {
     pub id: i32,
     pub full_name: String,
@@ -17,7 +19,7 @@ pub struct Instructor {
     pub timestamp: Option<chrono::NaiveDateTime>,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct Course {
     pub id: i32,
     pub name: String,
@@ -25,7 +27,7 @@ pub struct Course {
     pub discipline: String,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct ClassOffering {
     pub class_offering_id: i32,
     pub course_id: i32,
