@@ -44,9 +44,4 @@ joinable!(classoffering -> course (courseid));
 joinable!(classoffering -> instructor (instructorid));
 joinable!(classoffering -> term (term));
 
-allow_tables_to_appear_in_same_query!(
-    classoffering,
-    course,
-    instructor,
-    term,
-);
+allow_tables_to_appear_in_same_query!(classoffering, course, instructor, term,);

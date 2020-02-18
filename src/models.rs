@@ -1,6 +1,6 @@
 extern crate chrono;
 extern crate serde;
-use self::serde::{Serialize, Deserialize};
+use self::serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct Term {
