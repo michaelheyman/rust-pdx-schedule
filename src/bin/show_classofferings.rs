@@ -16,7 +16,7 @@ fn main() {
 
     println!("Displaying {} class offerings", results.len());
     for c in results {
-        println!("{}", c.class_offering_id);
+        println!("{}", c.id);
         println!("{}", c.course_id);
         println!("{:?}", c.instructor_id);
         println!("{:?}", c.term);

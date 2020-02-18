@@ -16,7 +16,7 @@ fn main() {
         .inner_join(instructor::table)
         .inner_join(course::table)
         .inner_join(term::table)
-        .limit(1)
+        .limit(5)
         .load(&connection)
         .expect("Error loading photos");
 
@@ -30,7 +30,7 @@ fn main() {
 
 fn create_json_object(co: ClassOffering, i: Instructor, c: Course, t: Term) -> Value {
     json!({
-        "id": co.class_offering_id,
+        "id": co.id,
         "credits": co.credits,
         "days": co.days,
         "time": co.time,

@@ -9,6 +9,7 @@ pub struct Term {
 }
 
 #[derive(Queryable, Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Instructor {
     pub id: i32,
     pub full_name: String,
@@ -28,10 +29,14 @@ pub struct Course {
 }
 
 #[derive(Queryable, Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct ClassOffering {
-    pub class_offering_id: i32,
+    pub id: i32,
+    #[serde(skip_serializing)]
     pub course_id: i32,
+    #[serde(skip_serializing)]
     pub instructor_id: Option<i32>,
+    #[serde(skip_serializing)]
     pub term: Option<i32>,
     pub credits: i32,
     pub days: Option<String>,
