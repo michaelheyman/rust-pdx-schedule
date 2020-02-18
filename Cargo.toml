@@ -3,10 +3,15 @@ name = "rust_diesel"
 version = "0.1.0"
 license = "MIT OR Apache-2.0"
 authors = ["Michael Heyman <michaelheyman@users.noreply.github.com>"]
+edition = "2018"
+default-run = "rust_diesel"
 
 [dependencies]
+actix-rt = "1.0.0"
+actix-web = "2.0.0"
 chrono = { version = "0.4.0", features = ["serde"] }
-diesel = { version = "1.4.0", features = ["chrono", "sqlite"] }
+diesel = { version = "1.4.0", features = ["chrono", "sqlite", "r2d2"] }
 dotenv = "0.10"
+r2d2 = "0.8"
 serde = { version = "1.0.104", features = ["derive"] }
 serde_json = { version = "1.0.48", features = ["preserve_order"] }
