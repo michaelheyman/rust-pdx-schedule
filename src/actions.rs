@@ -3,7 +3,7 @@ use diesel::prelude::*;
 use self::models::*;
 use crate::models;
 
-pub fn find_terms(
+pub fn get_terms(
     conn: &SqliteConnection,
 ) -> Result<Option<Vec<models::Term>>, diesel::result::Error> {
     use crate::schema::term::dsl::*;
