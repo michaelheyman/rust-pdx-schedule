@@ -1318,7 +1318,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust_diesel"
+name = "rust_pdx_schedule"
 version = "0.1.0"
 dependencies = [
  "actix-files",

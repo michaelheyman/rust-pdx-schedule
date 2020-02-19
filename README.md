@@ -1,4 +1,4 @@
-# rust-diesel
+# rust-pdx-schedule
 
 ## Installation
 

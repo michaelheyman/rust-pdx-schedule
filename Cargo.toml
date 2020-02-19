@@ -1,10 +1,10 @@
 [package]
-name = "rust_diesel"
+name = "rust_pdx_schedule"
 version = "0.1.0"
 license = "MIT OR Apache-2.0"
 authors = ["Michael Heyman <michaelheyman@users.noreply.github.com>"]
 edition = "2018"
-default-run = "rust_diesel"
+default-run = "rust_pdx_schedule"
 
 [dependencies]
 actix-files = "0.2.1"

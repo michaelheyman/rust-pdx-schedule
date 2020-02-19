@@ -1,11 +1,11 @@
 extern crate diesel;
-extern crate rust_diesel;
+extern crate rust_pdx_schedule;
 extern crate serde;
 extern crate serde_json;
 
 use self::models::*;
 use diesel::prelude::*;
-use rust_diesel::*;
+use rust_pdx_schedule::*;
 use serde_json::{json, Value};
 
 type ClassOfferingResult = (ClassOffering, Instructor, Course, Term);

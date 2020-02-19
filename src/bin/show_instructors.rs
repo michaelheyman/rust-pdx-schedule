@@ -1,9 +1,9 @@
 extern crate diesel;
-extern crate rust_diesel;
+extern crate rust_pdx_schedule;
 
 use self::models::*;
 use diesel::prelude::*;
-use rust_diesel::*;
+use rust_pdx_schedule::*;
 
 fn main() {
     use self::schema::instructor::dsl::*;
