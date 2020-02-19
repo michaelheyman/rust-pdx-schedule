@@ -12,6 +12,8 @@ mod schema;
 
 type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
+const DATABASE_PATH: &str = "dist/app.db";
+
 /// Gets all terms.
 #[get("/api/terms")]
 async fn get_terms(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
@@ -53,7 +55,8 @@ async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
 }
 
 fn create_database_connection_pool() -> Pool<ConnectionManager<SqliteConnection>> {
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
+    //    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
+    let database_url = std::env::var("DATABASE_URL").unwrap_or(DATABASE_PATH.to_string());
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
     let pool = r2d2::Pool::builder()
         .build(manager)
