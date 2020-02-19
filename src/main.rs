@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate diesel;
 
+use actix_files::Files;
 use actix_web::http::StatusCode;
 use actix_web::{
     get, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder, Result,
@@ -86,6 +87,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_terms)
             .service(get_classes)
             .service(client_page)
+            .service(Files::new("/", "./static/").index_file("index.html"))
     })
     .bind(&bind)?
     .run()
@@ -97,7 +99,7 @@ fn print_api_endpoints(bind: &&str) {
     println!("\tTerms: http://{}", &bind);
     println!("\tTerms: http://{}/welcome", &bind);
     println!("\tTerms: http://{}/api/terms", &bind);
-    println!("\tClasses: http://{}/api/classes/202001", &bind);
+    println!("\tClasses: http://{}/api/classes/latest", &bind);
 }
 
 fn create_database_connection_pool() -> Pool<ConnectionManager<SqliteConnection>> {
