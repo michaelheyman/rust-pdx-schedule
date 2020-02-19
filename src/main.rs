@@ -1,7 +1,8 @@
 #[macro_use]
 extern crate diesel;
 
-use actix_web::{get, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::http::StatusCode;
+use actix_web::{get, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder, Result};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager, Pool};
 
@@ -56,6 +57,13 @@ async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     }
 }
 
+#[get("/")]
+async fn client_page(req: HttpRequest) -> Result<HttpResponse> {
+    Ok(HttpResponse::build(StatusCode::OK)
+        .content_type("text/html; charset=utf-8")
+        .body(include_str!("../static/index.html")))
+}
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
@@ -71,9 +79,9 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // set up DB pool to be used with web::Data<Pool> extractor
             .data(pool.clone())
-            .route("/", web::get().to(hello_world))
             .service(get_terms)
             .service(get_classes)
+            .service(client_page)
     })
     .bind(&bind)?
     .run()
@@ -82,6 +90,8 @@ async fn main() -> std::io::Result<()> {
 
 fn print_api_endpoints(bind: &&str) {
     println!("API Endpoints:");
+    println!("\tTerms: http://{}", &bind);
+    println!("\tTerms: http://{}/welcome", &bind);
     println!("\tTerms: http://{}/api/terms", &bind);
     println!("\tClasses: http://{}/api/classes/202001", &bind);
 }
