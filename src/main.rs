@@ -17,7 +17,7 @@ async fn hello_world(req: HttpRequest) -> impl Responder {
 }
 
 /// Gets all terms.
-#[get("/terms")]
+#[get("/api/terms")]
 async fn get_terms(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
 
@@ -37,7 +37,7 @@ async fn get_terms(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
 }
 
 /// Gets all classes.
-#[get("/classes")]
+#[get("api/classes/{term}")]
 async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
 
@@ -82,8 +82,8 @@ async fn main() -> std::io::Result<()> {
 
 fn print_api_endpoints(bind: &&str) {
     println!("API Endpoints:");
-    println!("\tTerms: http://{}/terms", &bind);
-    println!("\tClasses: http://{}/classes", &bind);
+    println!("\tTerms: http://{}/api/terms", &bind);
+    println!("\tClasses: http://{}/api/classes/202001", &bind);
 }
 
 fn create_database_connection_pool() -> Pool<ConnectionManager<SqliteConnection>> {
