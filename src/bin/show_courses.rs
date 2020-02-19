@@ -18,7 +18,7 @@ fn main() {
     for c in results {
         println!("{}", c.id);
         println!("{}", c.name);
-        println!("{}", c.class);
+        println!("{}", c.number);
         println!("{}", c.discipline);
         println!("----------\n");
     }

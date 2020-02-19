@@ -24,7 +24,7 @@ pub struct Instructor {
 pub struct Course {
     pub id: i32,
     pub name: String,
-    pub class: String,
+    pub number: String,
     pub discipline: String,
 }
 
