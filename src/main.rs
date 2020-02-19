@@ -2,7 +2,9 @@
 extern crate diesel;
 
 use actix_web::http::StatusCode;
-use actix_web::{get, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder, Result};
+use actix_web::{
+    get, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder, Result,
+};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager, Pool};
 
@@ -66,6 +68,8 @@ async fn client_page(req: HttpRequest) -> Result<HttpResponse> {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+    std::env::set_var("RUST_LOG", "actix_web=info,diesel=debug");
+    env_logger::init();
     dotenv::dotenv().ok();
 
     let pool = create_database_connection_pool();
@@ -77,8 +81,8 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            // set up DB pool to be used with web::Data<Pool> extractor
             .data(pool.clone())
+            .wrap(middleware::Logger::default())
             .service(get_terms)
             .service(get_classes)
             .service(client_page)
