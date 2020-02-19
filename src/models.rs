@@ -44,3 +44,12 @@ pub struct ClassOffering {
     pub crn: i32,
     pub timestamp: Option<chrono::NaiveDateTime>,
 }
+
+#[derive(Queryable, Serialize, Deserialize, Debug)]
+pub struct ClassOfferingResult {
+    #[serde(flatten)]
+    class_offering: ClassOffering,
+    course: Course,
+    instructor: Instructor,
+    term: Term,
+}

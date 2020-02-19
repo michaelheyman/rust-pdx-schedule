@@ -3,8 +3,6 @@ use diesel::prelude::*;
 use self::models::*;
 use crate::models;
 
-type ClassOfferingResult = (ClassOffering, Instructor, Course, Term);
-
 pub fn find_terms(
     conn: &SqliteConnection,
 ) -> Result<Option<Vec<models::Term>>, diesel::result::Error> {
@@ -21,10 +19,9 @@ pub fn get_classes(
     use crate::schema::*;
 
     let results = classoffering::table
-        .inner_join(instructor::table)
         .inner_join(course::table)
+        .inner_join(instructor::table)
         .inner_join(term::table)
-        .limit(5)
         .load::<ClassOfferingResult>(conn)
         .optional()?;
 
