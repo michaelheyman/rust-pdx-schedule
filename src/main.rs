@@ -14,26 +14,6 @@ type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
 const DATABASE_PATH: &str = "dist/app.db";
 
-/// Gets all terms.
-#[get("/api/terms")]
-async fn get_terms(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
-    let conn = pool.get().expect("couldn't get db connection from pool");
-
-    let terms = web::block(move || actions::get_terms(&conn))
-        .await
-        .map_err(|e| {
-            eprintln!("{}", e);
-            HttpResponse::InternalServerError().finish()
-        })?;
-
-    if let Some(terms) = terms {
-        Ok(HttpResponse::Ok().json(terms))
-    } else {
-        let res = HttpResponse::NotFound().body(format!("No terms found"));
-        Ok(res)
-    }
-}
-
 /// Gets all classes.
 #[get("api/classes/{term}")]
 async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
@@ -50,6 +30,66 @@ async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
         Ok(HttpResponse::Ok().json(classes))
     } else {
         let res = HttpResponse::NotFound().body(format!("No classes found"));
+        Ok(res)
+    }
+}
+
+/// Gets all courses.
+#[get("/api/courses")]
+async fn get_courses(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let courses = web::block(move || actions::get_courses(&conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(courses) = courses {
+        Ok(HttpResponse::Ok().json(courses))
+    } else {
+        let res = HttpResponse::NotFound().body(format!("No courses found"));
+        Ok(res)
+    }
+}
+
+/// Gets all instructors.
+#[get("/api/instructors")]
+async fn get_instructors(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let instructors = web::block(move || actions::get_instructors(&conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(instructors) = instructors {
+        Ok(HttpResponse::Ok().json(instructors))
+    } else {
+        let res = HttpResponse::NotFound().body(format!("No instructors found"));
+        Ok(res)
+    }
+}
+
+/// Gets all terms.
+#[get("/api/terms")]
+async fn get_terms(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let terms = web::block(move || actions::get_terms(&conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(terms) = terms {
+        Ok(HttpResponse::Ok().json(terms))
+    } else {
+        let res = HttpResponse::NotFound().body(format!("No terms found"));
         Ok(res)
     }
 }
@@ -79,8 +119,10 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(pool.clone())
             .wrap(middleware::Logger::default())
-            .service(get_terms)
             .service(get_classes)
+            .service(get_courses)
+            .service(get_instructors)
+            .service(get_terms)
             .service(Files::new("/", "./static/").index_file("index.html"))
     })
     .bind(&bind)?

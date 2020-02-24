@@ -20,8 +20,10 @@ This application is the back-end for a web-application that displays PSU schedul
 
 It has a few endpoints defined in it:
 * http://localhost:8080/ routes to the application
-* http://localhost:8080/api/terms responds with JSON from the database matching the list of terms
 * http://localhost:8080/api/classes/latest responds with JSON from the database matching the list of classes
+* http://localhost:8080/api/courses responds with JSON from the database matching the list of courses
+* http://localhost:8080/api/instructors responds with JSON from the database matching the list of instructors
+* http://localhost:8080/api/terms responds with JSON from the database matching the list of terms
 
 These endpoints were built, as they are required for front-end to function.
 
