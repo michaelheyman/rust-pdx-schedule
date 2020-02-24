@@ -1,10 +1,17 @@
 #![recursion_limit = "256"]
 
+extern crate serde;
+
+use anyhow;
+use self::serde::{Deserialize};
 use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use yew::format::{Json, Nothing};
+use yew::services::fetch::{FetchService, FetchTask, Request, Response};
 
 pub struct Model {
     link: ComponentLink<Self>,
     rows: Vec<Row>,
+    loaded: bool
 }
 
 struct Row {
@@ -20,6 +27,15 @@ struct Row {
 pub enum Msg {
     More,
     Less,
+    FetchResourceComplete,
+    FetchResourceFailed,
+    NoOp
+}
+
+#[derive(Deserialize)]
+pub struct Term {
+    pub date: i32,
+    pub description: String,
 }
 
 impl Component for Model {
@@ -28,6 +44,20 @@ impl Component for Model {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         // TODO: fetch data from back-end
+//        let get_request = Request::get("http://localhost:8080/api/terms").body(Nothing).unwrap();
+//        let callback = link.callback(|response: Response<Json<Result<Term, anyhow::Error>>>| {
+//            if let (meta, Json(Ok(body))) = response.into_parts() {
+//                if meta.status.is_success() {
+//                    println!("success!");
+//                    return Msg::FetchResourceComplete;
+//                }
+//            }
+//            println!("failure!");
+//            Msg::FetchResourceFailed
+//        });
+//        let task = FetchService::new().fetch(get_request, callback);
+//        println!( "task: {:?}", task);
+
         let row = Row {
             class: "class".to_string(),
             name: "name".to_string(),
@@ -50,16 +80,26 @@ impl Component for Model {
 
         let rows = vec![row, row2];
 
-        Model { link, rows }
+        Model { link, rows, loaded: true }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::FetchResourceComplete => {
+                self.loaded = true;
+            }
+            Msg::FetchResourceFailed => {
+                self.loaded = false;
+            }
+            _ => {}
+        }
         true
     }
 
     fn view(&self) -> Html {
         html! {
             <>
+                <h1>{self.loaded}</h1>
                 <table>
                     <thead>
                         {self.view_headers()}
@@ -95,5 +135,24 @@ impl Model {
                 <td>{row.rating.unwrap()}</td>
             </tr>
         }
+    }
+
+    fn fetch_terms_json(&mut self) -> yew::services::fetch::FetchTask {
+        let callback = self.link.callback(
+            move |response: Response<Json<Result<Term, anyhow::Error>>>| {
+                let (meta, Json(data)) = response.into_parts();
+                println!("META: {:?}", meta);
+                if meta.status.is_success() {
+//                    Msg::FetchReady(data)
+                    Msg::FetchResourceComplete
+                } else {
+                    Msg::NoOp // FIXME: Handle this error accordingly.
+                }
+            },
+        );
+        let request = Request::get("http://localhost:8080/api/terms").body(Nothing).unwrap();
+        let mut fetch_service = FetchService::new();
+
+        fetch_service.fetch(request, callback)
     }
 }
