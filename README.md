@@ -12,7 +12,11 @@ environment variable pointing to another path:
 echo DATABASE_URL=/path/to/file > .env
 ```
 
-Run `cargo run` to build the resources and run the application.
+## Running the Application
+
+In the terminal, execute `cargo run` to build the resources and run the application.
+
+When the server is up and running, visit http://localhost:8080.
 
 ## Application Details
 
@@ -21,7 +25,9 @@ This application is the back-end for a web-application that displays PSU schedul
 It has a few endpoints defined in it:
 * http://localhost:8080/ routes to the application
 * http://localhost:8080/api/classes/latest responds with JSON from the database matching the list of classes
+* http://localhost:8080/api/course/{id} responds with JSON from the database matching the course with the course id
 * http://localhost:8080/api/courses responds with JSON from the database matching the list of courses
+* http://localhost:8080/api/instructor/{id} responds with JSON from the database matching the instructor with the instructor id
 * http://localhost:8080/api/instructors responds with JSON from the database matching the list of instructors
 * http://localhost:8080/api/terms responds with JSON from the database matching the list of terms
 

@@ -54,6 +54,56 @@ async fn get_courses(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     }
 }
 
+/// Gets course by id.
+#[get("/api/course/{course_id}")]
+async fn get_course(
+    pool: web::Data<DbPool>,
+    course_id: web::Path<i32>,
+) -> Result<HttpResponse, Error> {
+    let course_id = course_id.into_inner();
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let course = web::block(move || actions::get_course(course_id, &conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(course) = course {
+        Ok(HttpResponse::Ok().json(course))
+    } else {
+        let res =
+            HttpResponse::NotFound().body(format!("Course with id '{}' not found", course_id));
+        Ok(res)
+    }
+}
+
+/// Gets instructor by id.
+#[get("/api/instructor/{instructor_id}")]
+async fn get_instructor(
+    pool: web::Data<DbPool>,
+    instructor_id: web::Path<i32>,
+) -> Result<HttpResponse, Error> {
+    let instructor_id = instructor_id.into_inner();
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let instructor = web::block(move || actions::get_instructor(instructor_id, &conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(instructor) = instructor {
+        Ok(HttpResponse::Ok().json(instructor))
+    } else {
+        let res = HttpResponse::NotFound()
+            .body(format!("Instructor with id '{}' not found", instructor_id));
+        Ok(res)
+    }
+}
+
 /// Gets all instructors.
 #[get("/api/instructors")]
 async fn get_instructors(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
@@ -120,7 +170,9 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             .wrap(middleware::Logger::default())
             .service(get_classes)
+            .service(get_course)
             .service(get_courses)
+            .service(get_instructor)
             .service(get_instructors)
             .service(get_terms)
             .service(Files::new("/", "./static/").index_file("index.html"))
