@@ -1,8 +1,9 @@
 #[macro_use]
 extern crate diesel;
 
+use actix_cors::Cors;
 use actix_files::Files;
-use actix_web::{get, middleware, web, App, Error, HttpResponse, HttpServer, Result};
+use actix_web::{get, http::header, middleware, web, App, Error, HttpResponse, HttpServer, Result};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager, Pool};
 
@@ -169,6 +170,16 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(pool.clone())
             .wrap(middleware::Logger::default())
+            .wrap(
+                Cors::new()
+                    //                    .allowed_origin("http://localhost:3000")
+                    .allowed_origin("http://[::1]:3000")
+                    .allowed_methods(vec!["GET", "POST"])
+                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                    .allowed_header(header::CONTENT_TYPE)
+                    .max_age(3600)
+                    .finish(),
+            )
             .service(get_classes)
             .service(get_course)
             .service(get_courses)
