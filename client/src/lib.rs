@@ -19,11 +19,41 @@ pub struct Model {
 }
 
 #[derive(Deserialize, Debug)]
+pub struct ClassOffering {
+    id: i32,
+    credits: i32,
+    days: Option<String>,
+    time: Option<String>,
+    crn: i32,
+    timestamp: Option<String>,
+    course: Course,
+    instructor: Instructor,
+    term: Term,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct Course {
-    pub id: i32,
-    pub name: String,
-    pub number: String,
-    pub discipline: String,
+    id: i32,
+    name: String,
+    number: String,
+    discipline: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Instructor {
+    id: i32,
+    full_name: String,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    rating: Option<f64>,
+    url: Option<String>,
+    timestamp: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Term {
+    date: i32,
+    description: String,
 }
 
 pub enum Msg {
