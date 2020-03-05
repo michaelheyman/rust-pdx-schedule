@@ -2,40 +2,34 @@
 
 extern crate serde;
 
-use anyhow;
-use self::serde::{Deserialize};
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use self::serde::Deserialize;
+use anyhow::Error;
 use yew::format::{Json, Nothing};
 use yew::services::fetch::{FetchService, FetchTask, Request, Response};
+use yew::services::ConsoleService;
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
 pub struct Model {
+    console: ConsoleService,
+    fetch_service: FetchService,
     link: ComponentLink<Self>,
-    rows: Vec<Row>,
-    loaded: bool
+    fetching: bool,
+    data: Option<Course>,
+    ft: Option<FetchTask>,
 }
 
-struct Row {
-    class: String,
-    name: String,
-    days: Option<String>,
-    time: Option<String>,
-    credits: i32,
-    instructor: String,
-    rating: Option<i32>,
+#[derive(Deserialize, Debug)]
+pub struct Course {
+    pub id: i32,
+    pub name: String,
+    pub number: String,
+    pub discipline: String,
 }
 
 pub enum Msg {
-    More,
-    Less,
-    FetchResourceComplete,
-    FetchResourceFailed,
-    NoOp
-}
-
-#[derive(Deserialize)]
-pub struct Term {
-    pub date: i32,
-    pub description: String,
+    FetchData,
+    FetchReady(Result<Course, Error>),
+    Ignore,
 }
 
 impl Component for Model {
@@ -43,55 +37,38 @@ impl Component for Model {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        // TODO: fetch data from back-end
-//        let get_request = Request::get("http://localhost:8080/api/terms").body(Nothing).unwrap();
-//        let callback = link.callback(|response: Response<Json<Result<Term, anyhow::Error>>>| {
-//            if let (meta, Json(Ok(body))) = response.into_parts() {
-//                if meta.status.is_success() {
-//                    println!("success!");
-//                    return Msg::FetchResourceComplete;
-//                }
-//            }
-//            println!("failure!");
-//            Msg::FetchResourceFailed
-//        });
-//        let task = FetchService::new().fetch(get_request, callback);
-//        println!( "task: {:?}", task);
-
-        let row = Row {
-            class: "class".to_string(),
-            name: "name".to_string(),
-            days: Some("days".to_string()),
-            time: Some("time".to_string()),
-            credits: 4,
-            instructor: "instructor".to_string(),
-            rating: Some(32),
-        };
-
-        let row2 = Row {
-            class: "class".to_string(),
-            name: "name".to_string(),
-            days: Some("days".to_string()),
-            time: None,
-            credits: 4,
-            instructor: "instructor".to_string(),
-            rating: Some(32),
-        };
-
-        let rows = vec![row, row2];
-
-        Model { link, rows, loaded: true }
+        Model {
+            console: ConsoleService::new(),
+            fetch_service: FetchService::new(),
+            link,
+            fetching: false,
+            data: None,
+            ft: None,
+        }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        self.console.log("Update");
         match msg {
-            Msg::FetchResourceComplete => {
-                self.loaded = true;
+            Msg::FetchData => {
+                self.fetching = true;
+                let task = self.fetch_json();
+                self.ft = Some(task);
             }
-            Msg::FetchResourceFailed => {
-                self.loaded = false;
+            Msg::FetchReady(response) => {
+                self.fetching = false;
+                self.data = response
+                    .map(|data| Course {
+                        id: data.id,
+                        name: data.name,
+                        number: data.number,
+                        discipline: data.discipline,
+                    })
+                    .ok();
             }
-            _ => {}
+            Msg::Ignore => {
+                return false;
+            }
         }
         true
     }
@@ -99,13 +76,15 @@ impl Component for Model {
     fn view(&self) -> Html {
         html! {
             <>
-                <h1>{self.loaded}</h1>
+                <button onclick=self.link.callback(|_| Msg::FetchData)>
+                    { "Fetch Data" }
+                </button>
+                {self.view_course()}
                 <table>
                     <thead>
                         {self.view_headers()}
                     </thead>
                     <tbody>
-                        { for self.rows.iter().map(|r| self.view_row(r)) }
                     </tbody>
                 </table>
             </>
@@ -115,7 +94,15 @@ impl Component for Model {
 
 impl Model {
     fn view_headers(&self) -> Html {
-        let headers = [ "Class", "Name", "Days", "Time", "Credits", "Instructor", "Rating"];
+        let headers = [
+            "Class",
+            "Name",
+            "Days",
+            "Time",
+            "Credits",
+            "Instructor",
+            "Rating",
+        ];
         html! {
             <tr>
                 { for headers.iter().map(|h| html! { <th>{h}</th> }) }
@@ -123,36 +110,34 @@ impl Model {
         }
     }
 
-    fn view_row(&self, row: &Row) -> Html {
-        html! {
-            <tr>
-                <td>{row.class.to_string()}</td>
-                <td>{row.name.to_string()}</td>
-                <td>{row.days.as_ref().unwrap()}</td>
-                <td>{row.time.as_ref().unwrap_or(&"".to_string())}</td>
-                <td>{row.credits.to_string()}</td>
-                <td>{row.instructor.to_string()}</td>
-                <td>{row.rating.unwrap()}</td>
-            </tr>
+    fn view_course(&self) -> Html {
+        if let Some(data) = &self.data {
+            html! {
+                <p>{ data.name.to_string() }</p>
+            }
+        } else {
+            html! {
+                <p>{ "Data hasn't fetched yet." }</p>
+            }
         }
     }
 
-    fn fetch_terms_json(&mut self) -> yew::services::fetch::FetchTask {
-        let callback = self.link.callback(
-            move |response: Response<Json<Result<Term, anyhow::Error>>>| {
-                let (meta, Json(data)) = response.into_parts();
-                println!("META: {:?}", meta);
-                if meta.status.is_success() {
-//                    Msg::FetchReady(data)
-                    Msg::FetchResourceComplete
-                } else {
-                    Msg::NoOp // FIXME: Handle this error accordingly.
-                }
-            },
-        );
-        let request = Request::get("http://localhost:8080/api/terms").body(Nothing).unwrap();
-        let mut fetch_service = FetchService::new();
+    fn fetch_json(&mut self) -> yew::services::fetch::FetchTask {
+        let callback =
+            self.link
+                .callback(move |response: Response<Json<Result<Course, Error>>>| {
+                    let (meta, Json(data)) = response.into_parts();
+                    println!("META: {:?}, {:?}", meta, data);
+                    if meta.status.is_success() {
+                        Msg::FetchReady(data)
+                    } else {
+                        Msg::Ignore // FIXME: Handle this error accordingly.
+                    }
+                });
+        let request = Request::get("http://localhost:8080/api/course/1")
+            .body(Nothing)
+            .unwrap();
 
-        fetch_service.fetch(request, callback)
+        self.fetch_service.fetch(request, callback)
     }
 }
