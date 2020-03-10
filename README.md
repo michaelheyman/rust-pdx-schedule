@@ -24,6 +24,7 @@ This application is the back-end for a web-application that displays PSU schedul
 
 It has a few endpoints defined in it:
 * http://localhost:8080/ routes to the application
+* http://localhost:8080/api/class/{id} responds with JSON from the database matching the class offering with the class id
 * http://localhost:8080/api/classes/latest responds with JSON from the database matching the list of classes
 * http://localhost:8080/api/course/{id} responds with JSON from the database matching the course with the course id
 * http://localhost:8080/api/courses responds with JSON from the database matching the list of courses

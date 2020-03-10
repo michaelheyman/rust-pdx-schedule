@@ -15,6 +15,30 @@ type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
 const DATABASE_PATH: &str = "dist/app.db";
 
+/// Gets class by id.
+#[get("/api/class/{class_id}")]
+async fn get_class(
+    pool: web::Data<DbPool>,
+    class_id: web::Path<i32>,
+) -> Result<HttpResponse, Error> {
+    let class_id = class_id.into_inner();
+    let conn = pool.get().expect("couldn't get db connection from pool");
+
+    let class = web::block(move || actions::get_class(class_id, &conn))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    if let Some(class) = class {
+        Ok(HttpResponse::Ok().json(class))
+    } else {
+        let res = HttpResponse::NotFound().body(format!("Class with id '{}' not found", class_id));
+        Ok(res)
+    }
+}
+
 /// Gets all classes.
 #[get("api/classes/{term}")]
 async fn get_classes(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
@@ -180,6 +204,7 @@ async fn main() -> std::io::Result<()> {
                     .max_age(3600)
                     .finish(),
             )
+            .service(get_class)
             .service(get_classes)
             .service(get_course)
             .service(get_courses)

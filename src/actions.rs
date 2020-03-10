@@ -3,6 +3,24 @@ use diesel::prelude::*;
 use self::models::*;
 use crate::models;
 
+pub fn get_class(
+    class_id: i32,
+    conn: &SqliteConnection,
+) -> Result<Option<ClassOfferingResult>, diesel::result::Error> {
+    use crate::schema::classoffering::columns::classofferingid;
+    use crate::schema::*;
+
+    let result = classoffering::table
+        .inner_join(course::table)
+        .inner_join(instructor::table)
+        .inner_join(term::table)
+        .filter(classofferingid.eq(class_id))
+        .first(conn)
+        .optional()?;
+
+    Ok(result)
+}
+
 pub fn get_classes(
     conn: &SqliteConnection,
 ) -> Result<Option<Vec<ClassOfferingResult>>, diesel::result::Error> {
