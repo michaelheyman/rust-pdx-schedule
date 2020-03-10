@@ -107,47 +107,38 @@ impl Component for Model {
         html! {
             <>
                 <button onclick=self.link.callback(|_| Msg::FetchData)>
-                    { "Fetch Data" }
+                    { "Fetch Course Data" }
                 </button>
                 {self.view_course()}
-                <table>
-                    <thead>
-                        {self.view_headers()}
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
             </>
         }
     }
 }
 
 impl Model {
-    fn view_headers(&self) -> Html {
-        let headers = [
-            "Class",
-            "Name",
-            "Days",
-            "Time",
-            "Credits",
-            "Instructor",
-            "Rating",
-        ];
-        html! {
-            <tr>
-                { for headers.iter().map(|h| html! { <th>{h}</th> }) }
-            </tr>
-        }
-    }
-
     fn view_course(&self) -> Html {
         if let Some(data) = &self.data {
+            let headers = ["Id", "Name", "Number", "Discipline"];
             html! {
-                <p>{ data.name.to_string() }</p>
+                <>
+                    <table>
+                        <thead>
+                            <tr>
+                                { for headers.iter().map(|h| html! { <th>{h}</th> }) }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td>{ data.id.to_string() }</td>
+                            <td>{ data.name.to_string() }</td>
+                            <td>{ data.number.to_string() }</td>
+                            <td>{ data.discipline.to_string() }</td>
+                        </tbody>
+                    </table>
+                </>
             }
         } else {
             html! {
-                <p>{ "Data hasn't fetched yet." }</p>
+                <p>{ "Course data hasn't fetched yet." }</p>
             }
         }
     }
