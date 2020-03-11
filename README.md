@@ -18,6 +18,8 @@ In the terminal, execute `cargo run` to build the resources and run the applicat
 
 When the server is up and running, visit http://localhost:8080.
 
+For instructions how to run the Yew client, go [here](./client/README.md).
+
 ## Application Details
 
 This application is the back-end for a web-application that displays PSU schedule information.
@@ -32,7 +34,7 @@ It has a few endpoints defined in it:
 * http://localhost:8080/api/instructors responds with JSON from the database matching the list of instructors
 * http://localhost:8080/api/terms responds with JSON from the database matching the list of terms
 
-These endpoints were built, as they are required for front-end to function.
+These endpoints were implemented, as some of them are required for front-end to function.
 
 A few binaries were created in the course of developing a solution to interact with the database.
 These binaries can be found in the [src/bin](src/bin/) directory.
